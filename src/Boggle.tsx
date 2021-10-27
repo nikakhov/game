@@ -36,7 +36,14 @@ export const Boggle: React.FC = () => {
         })
     }
 
-    const currentlySelectedWord=selected.map(index2D => boardState && boardState[index2D[0]][index2D[1]]).join('');
+    const currentlySelectedWord=selected.map(index2D => {
+        const letter=boardState && boardState[index2D[0]][index2D[1]];
+        if (letter==='Q'){
+            return "QU";
+        } else {
+            return letter;
+        }
+    }).join('');
     /*Could be improved with binary search tree because the list is sorted*/
     const isInDictionary=Dictionary.indexOf(currentlySelectedWord)!==-1;
     const alreadySubmitted=submittedWords.indexOf(currentlySelectedWord)!==-1;
@@ -65,11 +72,14 @@ export const Boggle: React.FC = () => {
             }
             )
         }
-        <button disabled={!isInDictionary || alreadySubmitted} onClick={()=>{
-            const length=currentlySelectedWord.length>8? '8' : currentlySelectedWord.length;
-            console.log("length", length);
-            setPoints(points+Points[length]);
-            setSubmittedWords([...submittedWords, currentlySelectedWord]);
+        <button disabled={alreadySubmitted} onClick={()=>{
+            if (!isInDictionary) {
+                setPoints(points-2);
+            } else {
+                const length=currentlySelectedWord.length>8? '8' : currentlySelectedWord.length;
+                setPoints(points+Points[length]);
+                setSubmittedWords([...submittedWords, currentlySelectedWord]);
+            }
             setSelected([]);
         }}> Submit </button>
     </>;
