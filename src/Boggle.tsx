@@ -25,15 +25,16 @@ export const Boggle: React.FC = () => {
         setBoardState(board);
     }, []);
     console.log(selected);
-    function isAdjacent(adjacentTo: number[][], square: number[]) {
-        return adjacentTo.some(element => {
+    function isAdjacent(adjacentTo: number[], square: number[]) {
+        console.log(adjacentTo, square, 'adj')
             if (
-                (square[0] === element[0] || square[0] === element[0] + 1 || square[0] === element[0] - 1) &&
-                (square[1] === element[1] || square[1] === element[1] + 1 || square[1] === element[1] - 1)
+                (square[0] === adjacentTo[0] || square[0] === adjacentTo[0] + 1 || square[0] === adjacentTo[0] - 1) &&
+                (square[1] === adjacentTo[1] || square[1] === adjacentTo[1] + 1 || square[1] === adjacentTo[1] - 1)
             ) {
                 return true;
+            } else {
+                return false;
             }
-        })
     }
 
     const currentlySelectedWord=selected.map(index2D => {
@@ -50,9 +51,6 @@ export const Boggle: React.FC = () => {
     return <>
         <p>Currently selected: {currentlySelectedWord}</p>
         <p>is {!isInDictionary && <b>not</b>} in dicionary</p>
-        <p>{alreadySubmitted && <b>has already been submitted</b>}</p>
-        <p>Points {points}</p>
-        <p>Submitted words:<br/> {submittedWords.map(word=><>{word}<br/></>)}</p>
         {
             boardState && boardState.map((row, i) => {
                 return <div>{row.map((letter, j) => {
@@ -62,9 +60,11 @@ export const Boggle: React.FC = () => {
                             return;
                         }
                         const index = selected.findIndex(element => element[0] === i && element[1] === j);
-                        if (index === -1 && isAdjacent(selected, [i, j])) {
+                        if (index === -1 && isAdjacent(selected[selected.length-1], [i, j])) {
+                            console.log(index, 'test')
                             setSelected([...selected, [i, j]])
-                        } else {
+                        }
+                        if (index !== -1) {
                                 setSelected([...selected.slice(0, index), ...selected.slice(index + 1)])
                             }
                         }} />
@@ -82,5 +82,8 @@ export const Boggle: React.FC = () => {
             }
             setSelected([]);
         }}> Submit </button>
+        <p>{alreadySubmitted && <b>has already been submitted</b>}</p>
+        <p>Points {points}</p>
+        <p>Submitted words:<br/> {submittedWords.map(word=><>{word}<br/></>)}</p>
     </>;
 }
