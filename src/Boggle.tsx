@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { LetterDistribution } from "./LetterDistribution";
 import { Square } from "./Square";
+import { Dictionary } from "./Dictionary";
 
 export const Boggle: React.FC = () => {
     const [boardState, setBoardState] = useState<string[][]>()
@@ -31,12 +32,15 @@ export const Boggle: React.FC = () => {
             }
         })
     }
+
+    const currentlySelected=selected.map(index2D => boardState && boardState[index2D[0]][index2D[1]]).join('');
     return <>
-        <p>Currently selected: {selected.map(index2D => boardState && boardState[index2D[0]][index2D[1]])}</p>
+        <p>Currently selected: {currentlySelected}</p>
+        <p>is {/*Could be improved with binary search tree because the list is sorted*/ Dictionary.indexOf(currentlySelected)===-1&& <b>not</b>} in dicionary</p>
         {
             boardState && boardState.map((row, i) => {
                 return <div>{row.map((letter, j) => {
-                    return <Square letter={letter} onClick={() => {
+                    return <Square letter={letter} selected={selected.findIndex(element => element[0] === i && element[1] === j)!==-1} onClick={() => {
                         if (selected.length===0) {
                             setSelected([[i, j]]);
                             return;
